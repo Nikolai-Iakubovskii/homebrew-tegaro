@@ -1,12 +1,13 @@
 name: Check the cask
 
 # Audits the cask, installs it on a fresh runner, checks the signature and removes it again with
-# zap: on every push, once a day, and on demand (the hourly bump dispatches it after a move).
+# zap: on every push, once a week, and on demand (the hourly bump dispatches it after a move).
+# Each run downloads the DMG once, so it stays off a daily schedule.
 on:
   push:
   workflow_dispatch:
   schedule:
-    - cron: "41 6 * * *"
+    - cron: "41 6 * * 1"
 
 permissions:
   contents: read
