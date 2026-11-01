@@ -1,0 +1,30 @@
+name: Follow the Tegaro feed
+
+# Every hour: move the cask to the newest build in the app's Sparkle feed (scripts/bump_cask.py).
+on:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bump-cask
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Move the cask to the feed's newest build
+        run: python3 scripts/bump_cask.py
+      - name: Commit the new version
+        run: |
+          git diff --quiet && exit 0
+          version=$(sed -n 's/^  version "\(.*\)"$/\1/p' Casks/tegaro.rb)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "tegaro ${version}"
+          git push
