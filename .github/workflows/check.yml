@@ -1,0 +1,45 @@
+name: Check the cask
+
+# Audits the cask, installs it on a fresh runner, checks the signature and removes it again with
+# zap: on every push, once a day, and on demand (the hourly bump dispatches it after a move).
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 6 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      HOMEBREW_NO_ANALYTICS: "1"
+      HOMEBREW_NO_ENV_HINTS: "1"
+      CASK: nikolai-iakubovskii/tegaro/tegaro
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Tap this checkout
+        run: |
+          brew tap nikolai-iakubovskii/tegaro "$GITHUB_WORKSPACE"
+          brew trust --cask "$CASK"
+      - name: Style
+        run: brew style nikolai-iakubovskii/tegaro
+      - name: Audit
+        run: brew audit --cask --online --strict "$CASK"
+      - name: Livecheck reads the feed
+        run: brew livecheck --cask "$CASK"
+      - name: Install and check the signature
+        run: |
+          brew install --cask "$CASK"
+          codesign --verify --deep --strict --verbose=2 /Applications/Tegaro.app
+          spctl --assess --type execute --verbose=4 /Applications/Tegaro.app
+      - name: Uninstall with zap
+        run: |
+          brew uninstall --zap --cask "$CASK"
+          test ! -e /Applications/Tegaro.app

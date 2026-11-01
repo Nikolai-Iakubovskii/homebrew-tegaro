@@ -4,8 +4,8 @@ cask "tegaro" do
 
   url "https://releases.klavadabra.com/Tegaro-#{version}.dmg"
   name "Tegaro"
-  desc "Unified Mac menu bar productivity toolkit"
-  homepage "https://tegaro.app"
+  desc "Menu bar toolkit with keyboard layout fixer, clipboard history and dictation"
+  homepage "https://tegaro.app/"
 
   # The app's own SUFeedURL; shipped builds poll this exact URL (docs/wiki/16-naming.md).
   livecheck do
