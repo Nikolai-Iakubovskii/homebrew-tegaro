@@ -1,6 +1,6 @@
 cask "tegaro" do
-  version "0.1.80"
-  sha256 "b8ae097eddab9e28b0c0fdd9cc10b54008f849381ee282fd16560d42972fc4dd"
+  version "0.1.81"
+  sha256 "b8dae9b0649111bc50ed94dbcc523e6732a38f345dec23d2880af79dce4adf42"
 
   url "https://releases.klavadabra.com/Tegaro-#{version}.dmg"
   name "Tegaro"
